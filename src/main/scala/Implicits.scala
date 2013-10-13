@@ -2,7 +2,7 @@ package com.benkolera.slick
 
 import java.nio.file.{Path,Paths}
 import org.joda.time.{LocalDateTime,LocalTime,LocalDate}
-
+import java.sql.{Date,Time,Timestamp}
 import scala.slick.jdbc.{GetResult,SetParameter}
 import GetResult._
 import SetParameter._
@@ -25,66 +25,106 @@ object Implicits {
   )
 
   //============================================================================
+  //  PgLocalDateTime
+  //============================================================================
+
+  implicit val pgLocalDateTimeSetParameters = SetParameter.apply[PgLocalDateTime]{
+    (ldt,params) => params.setTimestamp(PgLocalDateTime.toSql(ldt))
+  }
+  implicit val pgLocalDateTimeGetResult = GetResult[PgLocalDateTime]( r =>
+    PgLocalDateTime.fromSql( r.nextTimestamp )
+  )
+
+  // I'd argue that it doesn't make sense to have a timestamp that is both
+  // nullable and possible to be infinite, but it doesn't hurt to have this in
+  // here.
+  implicit val pgLocalDateTimeOptSetParameters =
+    SetParameter.apply[Option[PgLocalDateTime]]{ (ldt,params) =>
+      params.setTimestampOption( ldt.map( PgLocalDateTime.toSql _ ) )
+    }
+  implicit val pgLocalDateTimeOptGetResult = GetResult[Option[PgLocalDateTime]](
+    r => r.nextTimestampOption.map( PgLocalDateTime.fromSql _ )
+  )
+
+  //============================================================================
   //  org.joda.time.LocalDateTime
   //============================================================================
+
+  private def ldtToSql( ldt:LocalDateTime ):Timestamp = {
+    new java.sql.Timestamp(ldt.toDateTime.getMillis)
+  }
+
+  private def sqlToLdt( sql:Timestamp ):LocalDateTime = {
+    PgLocalDateTime.fromSql( sql ) match {
+      case Defined(dt) => dt
+      case _ => throw new RuntimeException(
+        "PgLocalDateTime must be used for Infinite timestamp."
+      )
+    }
+  }
+
   implicit val localDateTimeSetParameters = SetParameter.apply[LocalDateTime]{
-    (ldt,params) => params.setTimestamp(
-      new java.sql.Timestamp(ldt.toDateTime.getMillis)
-    )
+    (ldt,params) => params.setTimestamp( ldtToSql(ldt) )
   }
   implicit val localDateTimeGetResult = GetResult[LocalDateTime]( r =>
-    new LocalDateTime( r.nextTimestamp.getTime )
+    sqlToLdt( r.nextTimestamp )
   )
   implicit val localDateTimeOptSetParameters =
     SetParameter.apply[Option[LocalDateTime]]{ (ldt,params) =>
-      params.setTimestampOption(
-        ldt.map( x => new java.sql.Timestamp(x.toDateTime.getMillis))
-      )
+      params.setTimestampOption( ldt.map( ldtToSql _ ) )
     }
   implicit val localDateTimeOptGetResult = GetResult[Option[LocalDateTime]](
-    r => r.nextTimestampOption.map( ts => new LocalDateTime( ts.getTime ) )
+    r => r.nextTimestampOption.map( sqlToLdt _ )
   )
 
   //============================================================================
   //  org.joda.time.LocalDate
   //============================================================================
+  private def ldToSql( ld:LocalDate ):Date = {
+    new java.sql.Date(ld.toDateTimeAtStartOfDay.getMillis)
+  }
+
+  private def sqlToLd( sql:Date ):LocalDate = {
+    new LocalDate( sql.getTime )
+  }
+
   implicit val localDateSetParameters = SetParameter.apply[LocalDate]{
-    (ld,params) => params.setDate(
-      new java.sql.Date(ld.toDateTimeAtStartOfDay.getMillis)
-    )
+    (ld,params) => params.setDate( ldToSql(ld) )
   }
   implicit val localDateGetResult = GetResult[LocalDate]( r =>
-    new LocalDate( r.nextDate.getTime )
+    sqlToLd( r.nextDate )
   )
   implicit val localDateOptSetParameters =
     SetParameter.apply[Option[LocalDate]]{ (ld,params) =>
-      params.setDateOption(
-        ld.map( x => new java.sql.Date(x.toDateTimeAtStartOfDay.getMillis))
-      )
+      params.setDateOption( ld.map( ldToSql _ ) )
     }
   implicit val localDateOptGetResult = GetResult[Option[LocalDate]](
-    r => r.nextDateOption.map( d => new LocalDate( d.getTime ) )
+    r => r.nextDateOption.map( sqlToLd _ )
   )
 
   //============================================================================
   //  org.joda.time.LocalTime
   //============================================================================
+
+  private def ltToSql( lt:LocalTime ):Time = {
+    new java.sql.Time(lt.toDateTimeToday().getMillis())
+  }
+  private def sqlToLt( sql:Time ):LocalTime = {
+    new LocalTime( sql.getTime )
+  }
+
   implicit val localTimeSetParameters = SetParameter.apply[LocalTime]{
-    (lt,params) => params.setTime(
-      new java.sql.Time(lt.toDateTimeToday().getMillis())
-    )
+    (lt,params) => params.setTime( ltToSql(lt) )
   }
   implicit val localTimeGetResult = GetResult[LocalTime]( r =>
-    new LocalTime( r.nextTime.getTime )
+    sqlToLt( r.nextTime )
   )
   implicit val localTimeOptSetParameters =
     SetParameter.apply[Option[LocalTime]]{ (lt,params) =>
-      params.setTimeOption(
-        lt.map( x => new java.sql.Time(x.toDateTimeToday.getMillis))
-      )
+      params.setTimeOption( lt.map( ltToSql _ ) )
     }
   implicit val localTimeOptGetResult = GetResult[Option[LocalTime]](
-    r => r.nextTimeOption.map( t => new LocalTime( t.getTime ) )
+    r => r.nextTimeOption.map( sqlToLt _ )
   )
 
   //============================================================================
