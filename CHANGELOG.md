@@ -1,5 +1,8 @@
 Changes to com.benkolera scala-slick-extras
-===========================================
+============================================
+	
+2013-10-15 - 0.3.0 - Ben Kolera
+- Added in a sane withTransaction method.
 
 2013-10-13 - 0.2.0 - Ben Kolera
 - Added PgLocalDateTime to handle Pgs infinite timestamps.
