@@ -5,7 +5,7 @@ import org.joda.time.LocalDateTime
 import java.sql.Timestamp
 import org.postgresql.PGStatement
 
-trait PgLocalDateTime {
+trait PgLocalDateTimeTypes {
   type PgLocalDateTime = InfiniteInstant[LocalDateTime]
   implicit val pgLocalDateTimeInstant = new Instant[LocalDateTime]{
     def isBefore(a:LocalDateTime,b:LocalDateTime) = a.isBefore(b)
