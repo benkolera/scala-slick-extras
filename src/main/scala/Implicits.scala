@@ -6,6 +6,7 @@ import java.sql.{Date,Time,Timestamp}
 import scala.slick.jdbc.{GetResult,SetParameter}
 import GetResult._
 import SetParameter._
+import joda.pg._
 
 object Implicits {
   //============================================================================
@@ -55,8 +56,8 @@ object Implicits {
   }
 
   private def sqlToLdt( sql:Timestamp ):LocalDateTime = {
-    PgLocalDateTime.fromSql( sql ) match {
-      case Defined(dt) => dt
+    joda.pg.PgLocalDateTime.fromSql( sql ) match {
+      case joda.Defined(dt) => dt
       case _ => throw new RuntimeException(
         "PgLocalDateTime must be used for Infinite timestamp."
       )
