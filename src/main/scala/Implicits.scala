@@ -47,6 +47,7 @@ object Implicits {
     r => r.nextTimestampOption.map( PgLocalDateTime.fromSql _ )
   )
 
+
   //============================================================================
   //  org.joda.time.LocalDateTime
   //============================================================================

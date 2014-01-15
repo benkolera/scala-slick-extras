@@ -17,19 +17,14 @@ trait PgDateTimeTypes {
 
 object PgDateTime {
   def fromSql( sql:java.sql.Timestamp ) = {
-    sql.getTime match {
-      case PGStatement.DATE_POSITIVE_INFINITY => PosInfinity[DateTime]()
-      case PGStatement.DATE_NEGATIVE_INFINITY => NegInfinity[DateTime]()
-      case t => Defined( new DateTime(t) )
-    }
-  }
-  def toSql( pgldt:PgDateTime ) = {
-    new java.sql.Timestamp(
-      pgldt match {
-        case PosInfinity() => PGStatement.DATE_POSITIVE_INFINITY
-        case NegInfinity() => PGStatement.DATE_NEGATIVE_INFINITY
-        case Defined(dt)   => dt.getMillis
-      }
+
+    foldMillis( sql.getTime )(
+      negInfinity = NegInfinity[DateTime](),
+      posInfinity = PosInfinity[DateTime](),
+      defined     = (t => Defined( new DateTime(t) ))
     )
+  }
+  def toSql( pgldt:PgLocalDateTime ) = {
+    new java.sql.Timestamp(getMillisInfinite( pgldt ))
   }
 }

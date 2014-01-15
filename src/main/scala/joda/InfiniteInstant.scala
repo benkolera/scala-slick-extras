@@ -6,7 +6,6 @@ sealed trait InfiniteInstant[A] {
   def isBefore( otherPg: InfiniteInstant[A] )( implicit ci:Instant[A] ):Boolean
   def isAfter( otherPg: InfiniteInstant[A] )( implicit ci:Instant[A] ):Boolean
   def isEqual( otherPg: InfiniteInstant[A] )( implicit ci:Instant[A] ):Boolean
-
   def map( f:A => A ):InfiniteInstant[A]
 
   def isBeforeOrEqual( otherPg: InfiniteInstant[A] )( implicit ci:Instant[A] ):Boolean = {
@@ -14,6 +13,18 @@ sealed trait InfiniteInstant[A] {
   }
   def isAfterOrEqual( otherPg: InfiniteInstant[A] )( implicit ci:Instant[A] ):Boolean = {
     isEqual(otherPg) || isAfter(otherPg)
+  }
+}
+
+object InfiniteInstant {
+  def fold[A,B]( ii:InfiniteInstant[A] )(
+    negInfinity: => B,
+    posInfinity: => B,
+    defined: A => B
+  ) = ii match {
+    case PosInfinity() => posInfinity
+    case NegInfinity() => negInfinity
+    case Defined(dt)   => defined( dt )
   }
 }
 
