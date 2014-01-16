@@ -1,7 +1,7 @@
 package com.benkolera.slick
 
 import java.nio.file.{Path,Paths}
-import org.joda.time.{LocalDateTime,LocalTime,LocalDate}
+import org.joda.time.{LocalDateTime,LocalTime,LocalDate,DateTime}
 import java.sql.{Date,Time,Timestamp}
 import scala.slick.jdbc.{GetResult,SetParameter}
 import GetResult._
@@ -77,6 +77,59 @@ object Implicits {
     }
   implicit val localDateTimeOptGetResult = GetResult[Option[LocalDateTime]](
     r => r.nextTimestampOption.map( sqlToLdt _ )
+  )
+
+  //============================================================================
+  //  PgDateTime
+  //============================================================================
+
+  implicit val pgDateTimeSetParameters = SetParameter.apply[PgDateTime]{
+    (dt,params) => params.setTimestamp(PgDateTime.toSql(dt))
+  }
+  implicit val pgDateTimeGetResult = GetResult[PgDateTime]( r =>
+    PgDateTime.fromSql( r.nextTimestamp )
+  )
+
+  // I'd argue that it doesn't make sense to have a timestamp that is both
+  // nullable and possible to be infinite, but it doesn't hurt to have this in
+  // here.
+  implicit val pgDateTimeOptSetParameters =
+    SetParameter.apply[Option[PgDateTime]]{ (dt,params) =>
+      params.setTimestampOption( dt.map( PgDateTime.toSql _ ) )
+    }
+  implicit val pgDateTimeOptGetResult = GetResult[Option[PgDateTime]](
+    r => r.nextTimestampOption.map( PgDateTime.fromSql _ )
+  )
+
+  //============================================================================
+  //  org.joda.time.DateTime
+  //============================================================================
+
+  private def dtToSql( dt:DateTime ):Timestamp = {
+    joda.pg.PgDateTime.toSql( joda.Defined(dt) )
+  }
+
+  private def sqlToDt( sql:Timestamp ):DateTime = {
+    joda.pg.PgDateTime.fromSql( sql ) match {
+      case joda.Defined(dt) => dt
+      case _ => throw new RuntimeException(
+        "PgLocalDateTime must be used for Infinite timestamp."
+      )
+    }
+  }
+
+  implicit val dateTimeSetParameters = SetParameter.apply[DateTime]{
+    (dt,params) => params.setTimestamp( dtToSql(dt) )
+  }
+  implicit val dateTimeGetResult = GetResult[DateTime]( r =>
+    sqlToDt( r.nextTimestamp )
+  )
+  implicit val dateTimeOptSetParameters =
+    SetParameter.apply[Option[DateTime]]{ (dt,params) =>
+      params.setTimestampOption( dt.map( dtToSql _ ) )
+    }
+  implicit val dateTimeOptGetResult = GetResult[Option[DateTime]](
+    r => r.nextTimestampOption.map( sqlToDt _ )
   )
 
   //============================================================================

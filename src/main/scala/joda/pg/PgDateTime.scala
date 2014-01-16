@@ -1,7 +1,7 @@
 package com.benkolera.slick.joda
 package pg
 
-import org.joda.time.DateTime
+import org.joda.time.{DateTime,DateTimeZone}
 import java.sql.Timestamp
 import org.postgresql.PGStatement
 
@@ -24,7 +24,9 @@ object PgDateTime {
       defined     = (t => Defined( new DateTime(t) ))
     )
   }
-  def toSql( pgldt:PgLocalDateTime ) = {
-    new java.sql.Timestamp(getMillisInfinite( pgldt ))
+  def toSql( pgdt:PgDateTime ) = {
+    new java.sql.Timestamp(
+      getMillisInfinite( pgdt.map( _.withZone(DateTimeZone.getDefault) ) )
+    )
   }
 }
