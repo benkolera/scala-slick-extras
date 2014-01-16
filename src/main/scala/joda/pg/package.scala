@@ -2,7 +2,7 @@ package com.benkolera.slick.joda
 
 import org.postgresql.PGStatement
 
-package object pg extends pg.PgLocalDateTimeTypes with pg.PgDateTimeTypes {
+package object pg {
   def foldMillis[A]( ms:Long )(
     negInfinity: => A,
     posInfinity: => A,
