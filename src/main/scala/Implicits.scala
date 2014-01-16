@@ -7,6 +7,8 @@ import scala.slick.jdbc.{GetResult,SetParameter}
 import GetResult._
 import SetParameter._
 import joda.pg._
+import PgLocalDateTime._
+import PgDateTime._
 
 object Implicits {
   //============================================================================
@@ -180,6 +182,25 @@ object Implicits {
     }
   implicit val localTimeOptGetResult = GetResult[Option[LocalTime]](
     r => r.nextTimeOption.map( sqlToLt _ )
+  )
+
+  //============================================================================
+  //  PgLocalDateTimeRange
+  //============================================================================
+
+  implicit val pgLocalDateTimeRangeSetParameters = SetParameter.apply[PgLocalDateTimeRange]{
+    (dt,params) => params.setString(PgLocalDateTime.rangeToSql(dt))
+  }
+  implicit val pgLocalDateTimeRangeGetResult = GetResult[PgLocalDateTimeRange]( r =>
+    PgLocalDateTime.rangeFromSql( r.nextString )
+  )
+
+  implicit val pgLocalDateTimeRangeOptSetParameters =
+    SetParameter.apply[Option[PgLocalDateTimeRange]]{ (dt,params) =>
+      params.setStringOption( dt.map( PgLocalDateTime.rangeToSql ) )
+    }
+  implicit val pgLocalDateTimeRangeOptGetResult = GetResult[Option[PgLocalDateTimeRange]](
+    r => r.nextStringOption.map( PgLocalDateTime.rangeFromSql )
   )
 
   //============================================================================
