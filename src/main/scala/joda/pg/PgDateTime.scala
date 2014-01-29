@@ -6,13 +6,9 @@ import java.sql.Timestamp
 import org.postgresql.PGStatement
 
 object PgDateTime {
-  type PgDateTime = InfiniteInstant[DateTime]
-  implicit val pgDateTimeInstant = new Instant[DateTime]{
-    def isBefore(a:DateTime,b:DateTime) = a.isBefore(b)
-    def isAfter(a:DateTime,b:DateTime)  = a.isAfter(b)
-    def isEqual(a:DateTime,b:DateTime)  = a.isEqual(b)
-    def getMillis(a:DateTime)  = a.toDateTime.getMillis
-  }
+  def apply( ldt:DateTime ) = Defined(ldt)
+  val posInf = PosInfinity[DateTime]()
+  val negInf = NegInfinity[DateTime]()
 
   def fromSql( sql:java.sql.Timestamp ) = {
     foldMillis( sql.getTime )(

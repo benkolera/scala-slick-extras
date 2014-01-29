@@ -6,14 +6,9 @@ import java.sql.Timestamp
 import org.postgresql.PGStatement
 
 object PgLocalDateTime {
-  type PgLocalDateTime = InfiniteInstant[LocalDateTime]
-  type PgLocalDateTimeRange = InstantRange[LocalDateTime]
-  implicit val pgLocalDateTimeInstant = new Instant[LocalDateTime]{
-    def isBefore(a:LocalDateTime,b:LocalDateTime) = a.isBefore(b)
-    def isAfter(a:LocalDateTime,b:LocalDateTime)  = a.isAfter(b)
-    def isEqual(a:LocalDateTime,b:LocalDateTime)  = a.isEqual(b)
-    def getMillis(a:LocalDateTime)  = a.toDateTime.getMillis
-  }
+  def apply( ldt:LocalDateTime ) = Defined(ldt)
+  val posInf = PosInfinity[LocalDateTime]()
+  val negInf = NegInfinity[LocalDateTime]()
 
   def fromSql( sql:java.sql.Timestamp ): InfiniteInstant[LocalDateTime] = {
     foldMillis( sql.getTime )(
