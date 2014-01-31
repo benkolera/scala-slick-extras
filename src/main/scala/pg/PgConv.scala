@@ -35,7 +35,10 @@ trait PgOptConv[A] extends PgConv[A] {
 
 trait PgListConv[A] extends PgConv[A] {
   def toSqlArray( l:List[A] ) = "{" + l.map( toSql ).mkString(",") + "}"
-  def fromSqlArray( s:String ) = s.tail.init.split(",").toList.map( fromSql )
+  def fromSqlArray( s:String ) = s.tail.init.split(",").toList match{
+    case h::Nil => Nil
+    case x => x.map( fromSql )
+  }
 
   implicit def getPgListResult = new GetResult[List[A]] {
     def apply( pr:PositionedResult ) = fromSqlArray( pr.nextString )
@@ -48,7 +51,7 @@ trait PgListConv[A] extends PgConv[A] {
   }
 }
 
-trait PgOptListConv[A] extends PgListConv[A] with PgOptConv[A] with PgConv[A] {
+trait PgOptListConv[A] extends PgListConv[A] with PgOptConv[A] {
   implicit def getPgOptionListResult = new GetResult[Option[List[A]]] {
     def apply( pr:PositionedResult ) =
       pr.nextStringOption.map( fromSqlArray )

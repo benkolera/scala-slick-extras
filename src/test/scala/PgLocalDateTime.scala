@@ -3,7 +3,7 @@ package com.benkolera.slick
 import org.specs2.mutable._
 import org.joda.time.LocalDateTime
 import com.benkolera.slick.joda.{PosInfinity,NegInfinity,Defined}
-import com.benkolera.slick.joda.pg.PgLocalDateTime.{pgLocalDateTimeInstant}
+import com.benkolera.slick.joda.pg.pgLocalDateTimeInstant
 
 class PgLocalDateTimeSpec extends Specification {
 
