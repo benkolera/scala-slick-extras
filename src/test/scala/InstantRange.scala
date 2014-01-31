@@ -1,6 +1,6 @@
 package com.benkolera.slick.joda
 
-import pg.PgLocalDateTime
+import pg.pgLocalDateTimeInstant
 import org.specs2.mutable._
 import org.joda.time.LocalDateTime
 import scala.util.Try
@@ -9,7 +9,6 @@ class InstantRangeSpec extends Specification {
   val now = LocalDateTime.now()
   val tomorrow = now.plusDays(1)
   val yesterday = now.plusDays(-1)
-  implicit val ci = PgLocalDateTime.pgLocalDateTimeInstant
 
   val yes2tomInc = InstantRange(
     InclusiveStart( Defined(yesterday) ),

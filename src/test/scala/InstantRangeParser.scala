@@ -8,7 +8,7 @@ class InstantRangeParserSpec extends Specification {
     InstantRange.toSql( PgLocalDateTime.toSql )(
       InstantRange.fromSql(
         PgLocalDateTime.fromSql
-      )( s )( PgLocalDateTime.pgLocalDateTimeInstant )
+      )( s )( pg.pgLocalDateTimeInstant )
   )
 
   "InstantRangeParser.fromSql" should {

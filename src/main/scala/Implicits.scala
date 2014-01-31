@@ -188,20 +188,15 @@ object Implicits {
   //  PgLocalDateTimeRange
   //============================================================================
 
-  implicit val pgLocalDateTimeRangeSetParameters = SetParameter.apply[PgLocalDateTimeRange]{
-    (dt,params) => params.setString(PgLocalDateTime.rangeToSql(dt))
+  object PgRange extends pg.PgOptConv[PgLocalDateTimeRange]{
+    val pgType = "tstzrange"
+    def fromSql( s:String ) = PgLocalDateTime.rangeFromSql(s)
+    def toSql( a:PgLocalDateTimeRange ) = PgLocalDateTime.rangeToSql(a)
   }
-  implicit val pgLocalDateTimeRangeGetResult = GetResult[PgLocalDateTimeRange]( r =>
-    PgLocalDateTime.rangeFromSql( r.nextString )
-  )
-
-  implicit val pgLocalDateTimeRangeOptSetParameters =
-    SetParameter.apply[Option[PgLocalDateTimeRange]]{ (dt,params) =>
-      params.setStringOption( dt.map( PgLocalDateTime.rangeToSql ) )
-    }
-  implicit val pgLocalDateTimeRangeOptGetResult = GetResult[Option[PgLocalDateTimeRange]](
-    r => r.nextStringOption.map( PgLocalDateTime.rangeFromSql )
-  )
+  implicit val pgLocalDateTimeRangeSetParameters = PgRange.setPgParameter
+  implicit val pgLocalDateTimeRangeGetResult = PgRange.getPgResult
+  implicit val pgLocalDateTimeRangeOptSetParameters = PgRange.setPgOptionParameter
+  implicit val pgLocalDateTimeRangeOptGetResult = PgRange.getPgOptionResult
 
   //============================================================================
   //  Case class helpers getResultCaseClass{2..22}
