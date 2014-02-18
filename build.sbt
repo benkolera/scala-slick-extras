@@ -10,7 +10,7 @@ scalaVersion := "2.10.3"
 scalacOptions ++= Seq("-feature","-deprecation","-Xfatal-warnings")
 
 libraryDependencies ++= Seq(
-  "com.typesafe.slick"     %% "slick"       % "1.0.1",
+  "com.typesafe.slick"     %% "slick"       % "2.0.0",
   "com.github.nscala-time" %% "nscala-time" % "0.6.0",
   "org.postgresql"          % "postgresql"  % "9.2-1003-jdbc4",
   "org.scalaz"             %% "scalaz-core" % "7.0.4",

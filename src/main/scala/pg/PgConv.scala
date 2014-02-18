@@ -1,7 +1,10 @@
 package com.benkolera.slick.pg
 
-import scala.slick.session.{PositionedParameters, PositionedResult}
-import scala.slick.jdbc.{GetResult, SetParameter}
+import scala.slick.jdbc.{
+  PositionedParameters,
+  PositionedResult,
+  GetResult,
+  SetParameter}
 import java.sql.Types.OTHER
 
 trait PgConv[A] {
