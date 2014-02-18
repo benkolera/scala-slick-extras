@@ -1,7 +1,7 @@
 package com.benkolera
 
 import scalaz._
-import scala.slick.session.Session
+import scala.slick.jdbc.JdbcBackend.Session
 
 package object slick {
   /*
