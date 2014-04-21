@@ -24,7 +24,7 @@ package object pg {
     )
 
   type PgLocalDateTime = InfiniteInstant[LocalDateTime]
-  type PgLocalDateTimeRange = InstantRange[LocalDateTime]
+  type PgLocalDateTimeRange = ValidityRange[LocalDateTime]
   implicit val pgLocalDateTimeInstant = new Instant[LocalDateTime]{
     def isBefore(a:LocalDateTime,b:LocalDateTime) = a.isBefore(b)
     def isAfter(a:LocalDateTime,b:LocalDateTime)  = a.isAfter(b)

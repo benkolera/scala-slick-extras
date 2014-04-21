@@ -190,7 +190,7 @@ object Implicits {
 
   object PgRange extends pg.PgOptConv[PgLocalDateTimeRange]{
     val pgType = "tstzrange"
-    def fromSql( s:String ) = PgLocalDateTime.rangeFromSql(s)
+    def fromSql( s:String ) = PgLocalDateTime.validityRangeFromSql(s)
     def toSql( a:PgLocalDateTimeRange ) = PgLocalDateTime.rangeToSql(a)
   }
   implicit val pgLocalDateTimeRangeSetParameters = PgRange.setPgParameter

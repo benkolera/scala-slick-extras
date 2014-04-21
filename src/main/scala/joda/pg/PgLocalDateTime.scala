@@ -23,4 +23,7 @@ object PgLocalDateTime {
 
   def rangeFromSql = InstantRange.fromSql( fromSql ) _
   def rangeToSql = InstantRange.toSql( toSql ) _
+
+  def validityRangeFromSql = ValidityRange.fromSql( fromSql ) _
+  def validityRangeToSql = ValidityRange.toSql( toSql ) _
 }
