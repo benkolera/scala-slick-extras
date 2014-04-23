@@ -10,7 +10,7 @@ import joda.pg._
 import PgLocalDateTime._
 import PgDateTime._
 
-object Implicits {
+object Implicits extends pg.PgCodec {
   //============================================================================
   //  java.nio.file.Path
   //============================================================================
@@ -188,15 +188,11 @@ object Implicits {
   //  PgLocalDateTimeRange
   //============================================================================
 
-  object PgRange extends pg.PgOptConv[PgLocalDateTimeRange]{
-    val pgType = "tstzrange"
-    def fromSql( s:String ) = PgLocalDateTime.validityRangeFromSql(s)
-    def toSql( a:PgLocalDateTimeRange ) = PgLocalDateTime.rangeToSql(a)
-  }
-  implicit val pgLocalDateTimeRangeSetParameters = PgRange.setPgParameter
-  implicit val pgLocalDateTimeRangeGetResult = PgRange.getPgResult
-  implicit val pgLocalDateTimeRangeOptSetParameters = PgRange.setPgOptionParameter
-  implicit val pgLocalDateTimeRangeOptGetResult = PgRange.getPgOptionResult
+  implicit val pgLocalDateTimeRangeCodec =
+    pgCodec[PgLocalDateTimeRange]( "tstzrange" )(
+      PgLocalDateTime.validityRangeToSql(_)
+    , PgLocalDateTime.validityRangeFromSql(_)
+    )
 
   //============================================================================
   //  Case class helpers getResultCaseClass{2..22}
