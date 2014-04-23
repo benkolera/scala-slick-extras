@@ -69,19 +69,23 @@ case class DefinedRange[A](
 ) extends FullRange[A]
 
 object ValidityRange {
+  def safeApply[A:Instant](
+    start:InfiniteInstant[A], end:InfiniteInstant[A]
+  ): Option[ValidityRange[A]] =
+    if ( start.isAfterOrEqual(end) ) None
+    else Some( new ValidityRange( InclusiveStart(start), ExclusiveEnd(end) ) )
+
   def apply[A:Instant](
     start:InfiniteInstant[A], end:InfiniteInstant[A]
   ): ValidityRange[A] =
-    if ( start.isAfter(end) )
-      throw new Exception(
-        "ValidityRange lower bound must be less than or equal to upper bound"
+    safeApply[A](start,end) match {
+      case Some(x) => x
+      case None    => throw new Exception(
+        "Lower bound must be less than upper bound in a ValidityRange"
       )
-    else
-      new ValidityRange( InclusiveStart(start), ExclusiveEnd(end) )
+    }
 
-  def apply[A:Instant](
-    start:A, end:A
-  ): ValidityRange[A] =
+  def apply[A:Instant]( start:A, end:A ): ValidityRange[A] =
     apply( Defined(start), Defined(end) )
 
   def fromSql[A:Instant]( f:Timestamp => InfiniteInstant[A] )( sql:String ): ValidityRange[A] =
