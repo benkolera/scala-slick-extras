@@ -12,9 +12,9 @@ scalacOptions ++= Seq("-feature","-deprecation","-Xfatal-warnings")
 libraryDependencies ++= Seq(
   "com.typesafe.slick"     %% "slick"       % "2.1.0",
   "com.github.nscala-time" %% "nscala-time" % "1.0.0",
-  "io.argonaut"            %% "argonaut"    % "6.0.4",
+  "io.argonaut"            %% "argonaut"    % "6.1",
   "org.postgresql"          % "postgresql"  % "9.2-1003-jdbc4",
-  "org.scalaz"             %% "scalaz-core" % "7.0.6",
+  "org.scalaz"             %% "scalaz-core" % "7.1.4",
   "org.specs2"             %% "specs2"      % "2.3.11" % "test"
 )
 
