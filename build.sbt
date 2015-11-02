@@ -5,12 +5,12 @@ organization := "com.benkolera"
 
 name := "slick-extra"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.7"
 
 scalacOptions ++= Seq("-feature","-deprecation","-Xfatal-warnings")
 
 libraryDependencies ++= Seq(
-  "com.typesafe.slick"     %% "slick"       % "2.0.1",
+  "com.typesafe.slick"     %% "slick"       % "2.1.0",
   "com.github.nscala-time" %% "nscala-time" % "1.0.0",
   "io.argonaut"            %% "argonaut"    % "6.0.4",
   "org.postgresql"          % "postgresql"  % "9.2-1003-jdbc4",
